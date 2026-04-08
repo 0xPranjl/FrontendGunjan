@@ -44,17 +44,23 @@ const Calendar = () => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40, rotateX: -10 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ type: "spring", damping: 20, stiffness: 100 }}
             className={styles.wrapper}
         >
+            <div className={styles.hangingDevice}>
+                <div className={styles.nail} />
+                <div className={styles.wire} />
+            </div>
+
             <div className={styles.spiral}>
                 {Array.from({ length: 15 }).map((_, i) => (
                     <motion.div
                         key={i}
                         initial={{ scaleY: 0 }}
                         animate={{ scaleY: 1 }}
-                        transition={{ delay: i * 0.05 }}
+                        transition={{ delay: i * 0.03 }}
                         className={styles.spiralHole}
                     />
                 ))}
@@ -65,6 +71,7 @@ const Calendar = () => {
                     currentDate={currentDate}
                     onNext={() => changeMonth(1)}
                     onPrev={() => changeMonth(-1)}
+                    onDateChange={(newDate) => setCurrentDate(newDate)}
                 />
 
                 <div className={styles.mainContent}>
