@@ -92,6 +92,20 @@
     pointer-events: none;
 }
 
+.badgeContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dateLabel {
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    opacity: 0.7;
+    letter-spacing: 0.05em;
+}
+
 .badgeText {
     font-size: 0.85rem;
     font-weight: 600;
