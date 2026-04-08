@@ -1,0 +1,86 @@
+.container {
+    width: 100%;
+}
+
+.weekHeader {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 1rem;
+}
+
+.weekDay {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+}
+
+/* Blue color for Saturday and Sunday headers as per image */
+.weekDay:nth-child(6),
+.weekDay:nth-child(7) {
+    color: var(--color-accent);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.dayCell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast);
+    color: var(--color-text-main);
+    position: relative;
+}
+
+.dayCell:hover:not(.empty) {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.empty {
+    cursor: default;
+    background: transparent;
+}
+
+/* Selection States */
+.start,
+.end {
+    background-color: var(--color-primary) !important;
+    color: var(--color-white) !important;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+
+.range {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border-radius: 0;
+}
+
+/* Add specialized colors for weekend numbers as per image */
+.dayCell:nth-child(7n),
+.dayCell:nth-child(7n-1) {
+    color: var(--color-accent);
+}
+
+.dayCell:nth-child(7n).start,
+.dayCell:nth-child(7n-1).start,
+.dayCell:nth-child(7n).end,
+.dayCell:nth-child(7n-1).end {
+    color: var(--color-white);
+}
+
+@media (max-width: 640px) {
+    .dayCell {
+        font-size: 0.8rem;
+    }
+}
