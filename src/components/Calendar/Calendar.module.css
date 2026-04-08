@@ -6,6 +6,32 @@
     filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.1));
 }
 
+.hangingDevice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: -10px;
+    z-index: 5;
+    position: relative;
+}
+
+.nail {
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(circle at 30% 30%, #9ca3af, #4b5563);
+    border-radius: 50%;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.wire {
+    width: 60px;
+    height: 40px;
+    border: 2px solid #4b5563;
+    border-bottom: none;
+    border-radius: 40px 40px 0 0;
+    margin-top: -4px;
+}
+
 .spiral {
     display: flex;
     justify-content: center;
@@ -14,7 +40,9 @@
     position: relative;
     z-index: 10;
     padding: 0 40px;
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.1));
 }
+
 
 .spiralHole {
     width: 16px;
