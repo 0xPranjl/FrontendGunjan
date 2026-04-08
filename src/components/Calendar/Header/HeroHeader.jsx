@@ -39,7 +39,7 @@ const HeroHeader = ({ currentDate, onNext, onPrev, onDateChange }) => {
                             ))}
                         </select>
                         <select value={year} onChange={handleYearChange} className={styles.selector}>
-                            {[2020, 2021, 2022, 2023, 2024, 2025].map(y => (
+                            {Array.from({ length: 31 }, (_, i) => 2010 + i).map(y => (
                                 <option key={y} value={y}>{y}</option>
                             ))}
                         </select>

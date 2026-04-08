@@ -10,7 +10,21 @@ const Calendar = () => {
     const [selection, setSelection] = useState({ start: null, end: null });
     const [notes, setNotes] = useState(() => {
         const saved = localStorage.getItem('calendar_notes');
-        return saved ? JSON.parse(saved) : {};
+        const parsed = saved ? JSON.parse(saved) : {};
+
+        // Normalize data: Ensure everything is an array of strings
+        const normalized = {};
+        Object.keys(parsed).forEach(key => {
+            const val = parsed[key];
+            if (Array.isArray(val)) {
+                normalized[key] = val.map(v => typeof v === 'object' ? (v.text || JSON.stringify(v)) : String(v));
+            } else if (typeof val === 'object' && val !== null) {
+                normalized[key] = [val.text || JSON.stringify(val)];
+            } else {
+                normalized[key] = [String(val)];
+            }
+        });
+        return normalized;
     });
     const [direction, setDirection] = useState(0);
 
@@ -30,8 +44,8 @@ const Calendar = () => {
         }
     };
 
-    const handleAddNote = (note) => {
-        const dateKey = selection.start ? selection.start.toDateString() : 'general';
+    const handleAddNote = (note, customDateKey) => {
+        const dateKey = customDateKey || (selection.start ? selection.start.toDateString() : 'general');
         setNotes(prev => ({ ...prev, [dateKey]: note }));
     };
 

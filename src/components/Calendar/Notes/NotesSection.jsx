@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StickyNote, Plus, Trash2 } from 'lucide-react';
 import styles from './NotesSection.module.css';
@@ -6,22 +6,67 @@ import styles from './NotesSection.module.css';
 const NotesSection = ({ selection, notes, onAddNote }) => {
     const [inputText, setInputText] = useState('');
 
-    const dateKey = selection.start ? selection.start.toDateString() : 'general';
+    const getDatesInRange = (start, end) => {
+        const dates = [];
+        let current = new Date(start);
+        const last = new Date(end);
 
-    const currentNotes = notes[dateKey] ?
-        (Array.isArray(notes[dateKey]) ? notes[dateKey] : [notes[dateKey]])
-        : [];
+        // Safety break
+        let count = 0;
+        while (current <= last && count < 32) {
+            dates.push(new Date(current));
+            current.setDate(current.getDate() + 1);
+            count++;
+        }
+        return dates;
+    };
+
+    const getSelectedDates = () => {
+        if (!selection.start) return [];
+        if (!selection.end) return [selection.start];
+        return getDatesInRange(selection.start, selection.end);
+    };
+
+    const selectedDates = getSelectedDates();
+
+    // Aggregate notes from all selected dates
+    const aggregatedNotes = selectedDates.reduce((acc, date) => {
+        const dateKey = date.toDateString();
+        const dateNotes = notes[dateKey] || [];
+        const notesList = Array.isArray(dateNotes) ? dateNotes : [dateNotes];
+
+        notesList.forEach((text, index) => {
+            acc.push({
+                text,
+                date: date,
+                dateKey: dateKey,
+                originalIdx: index,
+                id: `${dateKey}-${index}`
+            });
+        });
+        return acc;
+    }, []);
 
     const handleAdd = () => {
-        if (!inputText.trim()) return;
-        const updated = [...currentNotes, inputText.trim()];
-        onAddNote(updated);
+        if (!inputText.trim() || !selection.start) return;
+
+        // Always add to the start date of selection or the only selected date
+        const dateKey = selection.start.toDateString();
+        const currentDateNotes = notes[dateKey] || [];
+        const notesList = Array.isArray(currentDateNotes) ? currentDateNotes : [currentDateNotes];
+
+        const updated = [...notesList, inputText.trim()];
+
+        // We pass the full notes object update back or handle it locally
+        // Our onAddNote takes (newDateNotesList, optionalDateKey)
+        onAddNote(updated, dateKey);
         setInputText('');
     };
 
-    const removeNote = (index) => {
-        const updated = currentNotes.filter((_, i) => i !== index);
-        onAddNote(updated);
+    const handleRemove = (noteObj) => {
+        const notesList = notes[noteObj.dateKey] || [];
+        const updated = notesList.filter((_, i) => i !== noteObj.originalIdx);
+        onAddNote(updated, noteObj.dateKey);
     };
 
     return (
@@ -36,42 +81,61 @@ const NotesSection = ({ selection, notes, onAddNote }) => {
                     type="text"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Notes..."
+                    placeholder={selection.start ? "Add note to start date..." : "Select date to add notes..."}
                     className={styles.input}
+                    disabled={!selection.start}
                     onKeyPress={(e) => e.key === 'Enter' && handleAdd()}
                 />
-                <button onClick={handleAdd} className={styles.addBtn}>
+                <button
+                    onClick={handleAdd}
+                    className={styles.addBtn}
+                    disabled={!selection.start}
+                >
                     <Plus size={20} />
                 </button>
             </div>
 
             <div className={styles.badgeCloud}>
                 <AnimatePresence>
-                    {currentNotes.map((noteText, idx) => (
+                    {aggregatedNotes.map((note) => (
                         <motion.div
-                            key={`${dateKey}-${idx}`}
+                            key={note.id}
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0, opacity: 0 }}
                             whileHover={{ scale: 1.05 }}
                             className={styles.badge}
                         >
-                            <span className={styles.badgeText}>{noteText}</span>
-                            <button onClick={() => removeNote(idx)} className={styles.removeBtn}>
+                            <div className={styles.badgeContent}>
+                                {selection.end && (
+                                    <span className={styles.dateLabel}>
+                                        {note.date.getDate()} {note.date.toLocaleDateString('en-US', { month: 'short' })}
+                                    </span>
+                                )}
+                                <span className={styles.badgeText}>
+                                    {typeof note.text === 'object' ?
+                                        (note.text.text || JSON.stringify(note.text)) :
+                                        String(note.text)}
+                                </span>
+                            </div>
+                            <button onClick={() => handleRemove(note)} className={styles.removeBtn}>
                                 <Trash2 size={12} />
                             </button>
                         </motion.div>
                     ))}
                 </AnimatePresence>
-                {currentNotes.length === 0 && (
-                    <div className={styles.emptyState}>No Notes for this date</div>
+                {aggregatedNotes.length === 0 && (
+                    <div className={styles.emptyState}>
+                        {selection.start ? "No Notes for this selection" : "Select a date or range to view notes"}
+                    </div>
                 )}
             </div>
 
             <div className={styles.selectionHint}>
-                {selection.start ?
-                    `Showing notes for ${selection.start.toLocaleDateString()}` :
-                    "Showing General Notes"}
+                {selection.start && selection.end ?
+                    `Showing notes from ${selection.start.getDate()} to ${selection.end.getDate()} ${selection.start.toLocaleDateString('en-US', { month: 'short' })}` :
+                    selection.start ? `Showing notes for ${selection.start.toLocaleDateString()}` :
+                        "Showing General Notes"}
             </div>
         </div>
     );
