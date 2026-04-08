@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FileText, Edit3 } from 'lucide-react';
 import styles from './NotesSection.module.css';
 
 const NotesSection = ({ selection, notes, onAddNote }) => {
@@ -6,8 +8,8 @@ const NotesSection = ({ selection, notes, onAddNote }) => {
 
     const dateKey = selection.start ? selection.start.toDateString() : 'general';
     const displayTitle = selection.start
-        ? `Notes for ${selection.start.toLocaleDateString()}`
-        : 'Monthly Notes';
+        ? selection.start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : 'Monthly Overview';
 
     useEffect(() => {
         setCurrentText(notes[dateKey] || '');
@@ -21,28 +23,56 @@ const NotesSection = ({ selection, notes, onAddNote }) => {
 
     return (
         <div className={styles.container}>
-            <h2 className={styles.title}>Notes</h2>
-            <div className={styles.paper}>
-                <div className={styles.header}>
-                    <span className={styles.displayTitle}>{displayTitle}</span>
-                </div>
-                <textarea
-                    className={styles.textarea}
-                    placeholder="Jot down something..."
-                    value={currentText}
-                    onChange={handleChange}
-                />
-                <div className={styles.lines}>
-                    {Array.from({ length: 15 }).map((_, i) => (
-                        <div key={i} className={styles.line} />
-                    ))}
-                </div>
+            <div className={styles.labelSection}>
+                <FileText size={16} className={styles.icon} />
+                <h2 className={styles.title}>Notes</h2>
             </div>
-            <div className={styles.hint}>
-                {selection.start && !selection.end && "Select an end date to complete the range"}
-                {selection.start && selection.end && "Range selected. Add notes for the start date."}
-                {!selection.start && "Click a date to start selection"}
-            </div>
+
+            <motion.div
+                layout
+                className={styles.paper}
+            >
+                <div className={styles.paperHeader}>
+                    <div className={styles.headerIndicator} />
+                    <AnimatePresence mode="wait">
+                        <motion.span
+                            key={displayTitle}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 10 }}
+                            className={styles.displayTitle}
+                        >
+                            {displayTitle}
+                        </motion.span>
+                    </AnimatePresence>
+                    <Edit3 size={14} className={styles.editIcon} />
+                </div>
+
+                <div className={styles.editorArea}>
+                    <textarea
+                        className={styles.textarea}
+                        placeholder="Click a date to add specific notes..."
+                        value={currentText}
+                        onChange={handleChange}
+                    />
+                    <div className={styles.lines}>
+                        {Array.from({ length: 12 }).map((_, i) => (
+                            <div key={i} className={styles.line} />
+                        ))}
+                    </div>
+                </div>
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className={styles.hint}
+            >
+                {!selection.start && (
+                    <span className={styles.pulse}>●</span>
+                )}
+                {!selection.start ? "Select a date to begin" : "Changes are saved automatically"}
+            </motion.div>
         </div>
     );
 };
