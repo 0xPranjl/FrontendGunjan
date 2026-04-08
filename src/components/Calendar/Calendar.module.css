@@ -1,80 +1,108 @@
 .wrapper {
-    perspective: 1000px;
+    perspective: 2000px;
     width: 100%;
     max-width: var(--calendar-max-width);
-    margin: 0 auto;
+    margin: 2rem auto;
+    filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.1));
 }
 
 .spiral {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: -15px;
+    gap: 16px;
+    margin-bottom: -18px;
     position: relative;
-    z-index: 2;
+    z-index: 10;
+    padding: 0 40px;
 }
 
 .spiralHole {
-    width: 14px;
-    height: 24px;
-    background: linear-gradient(180deg, #ccc, #888);
-    border-radius: 4px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 16px;
+    height: 32px;
+    background: linear-gradient(180deg, #e5e7eb, #9ca3af, #4b5563);
+    border-radius: 8px;
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.8),
+        0 4px 6px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .calendarContainer {
-    background: var(--color-white);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-lg);
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-premium);
     overflow: hidden;
     border: 1px solid var(--color-border);
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    transform-origin: center;
+    position: relative;
 }
-
-.flipping {
-    transform: rotateX(15deg) scale(0.98);
-    opacity: 0.7;
-}
-
 
 .mainContent {
     display: grid;
-    grid-template-columns: 1fr 1.5fr;
-    padding: 2rem;
-    gap: 2rem;
+    grid-template-columns: 1fr 1.6fr;
+    padding: 3rem;
+    gap: 3rem;
+    background: var(--color-bg);
+    position: relative;
 }
 
-@media (max-width: 768px) {
-    .mainContent {
-        grid-template-columns: 1fr;
-        padding: 1rem;
-        gap: 1.5rem;
-    }
+/* Decorative background elements */
+.mainContent::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle at 2px 2px, rgba(0, 0, 0, 0.02) 1px, transparent 0);
+    background-size: 24px 24px;
+    pointer-events: none;
 }
 
 .rightPanel {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
+    position: relative;
+    z-index: 2;
 }
 
 .clearBtn {
     align-self: flex-end;
-    background: none;
+    background: white;
     border: 1px solid var(--color-border);
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 600;
     color: var(--color-text-muted);
     cursor: pointer;
-    transition: var(--transition-fast);
+    box-shadow: var(--shadow-inner);
+    transition: all 0.3s var(--transition-normal);
 }
 
 .clearBtn:hover {
-    background-color: var(--color-bg-light);
-    color: var(--color-primary);
-    border-color: var(--color-primary);
+    background: var(--grad-primary);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px var(--color-primary-glow);
+}
+
+@media (max-width: 1024px) {
+    .mainContent {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .wrapper {
+        margin: 0;
+    }
+
+    .mainContent {
+        padding: 1.5rem;
+    }
 }

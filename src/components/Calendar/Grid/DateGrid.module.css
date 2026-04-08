@@ -5,18 +5,18 @@
 .weekHeader {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .weekDay {
     text-align: center;
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 700;
     color: var(--color-text-muted);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
-/* Blue color for Saturday and Sunday headers as per image */
 .weekDay:nth-child(6),
 .weekDay:nth-child(7) {
     color: var(--color-accent);
@@ -25,7 +25,7 @@
 .grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    gap: 8px;
 }
 
 .dayCell {
@@ -33,40 +33,61 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
-    border-radius: var(--radius-sm);
-    transition: var(--transition-fast);
+    border-radius: var(--radius-md);
+    transition: all 0.3s var(--transition-normal);
     color: var(--color-text-main);
     position: relative;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .dayCell:hover:not(.empty) {
-    background-color: var(--color-primary-light);
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     color: var(--color-primary);
 }
 
 .empty {
     cursor: default;
     background: transparent;
+    border: none;
 }
 
 /* Selection States */
 .start,
 .end {
-    background-color: var(--color-primary) !important;
+    background: var(--grad-primary) !important;
     color: var(--color-white) !important;
-    font-weight: 600;
-    border-radius: var(--radius-sm);
+    font-weight: 700;
+    box-shadow: 0 8px 16px var(--color-primary-glow) !important;
+    border: none !important;
+    z-index: 2;
 }
 
 .range {
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
+    background: var(--color-primary-light) !important;
+    color: var(--color-primary) !important;
     border-radius: 0;
+    border-top: 1px solid var(--color-primary-glow) !important;
+    border-bottom: 1px solid var(--color-primary-glow) !important;
 }
 
-/* Add specialized colors for weekend numbers as per image */
+.glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-primary);
+    filter: blur(15px);
+    opacity: 0.3;
+    z-index: -1;
+    border-radius: inherit;
+}
+
 .dayCell:nth-child(7n),
 .dayCell:nth-child(7n-1) {
     color: var(--color-accent);
@@ -81,6 +102,10 @@
 
 @media (max-width: 640px) {
     .dayCell {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .grid {
+        gap: 4px;
     }
 }

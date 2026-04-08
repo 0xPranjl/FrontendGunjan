@@ -1,17 +1,15 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import styles from './DateGrid.module.css';
 
 const DateGrid = ({ currentDate, selection, onDateClick }) => {
     const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
 
-    // Adjust for Monday start (as per image)
     const startOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-
     const weekDays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
     const days = [];
-    // Previous month dates (optional visual filler)
     for (let i = 0; i < startOffset; i++) {
         days.push({ day: '', currentMonth: false });
     }
@@ -33,6 +31,21 @@ const DateGrid = ({ currentDate, selection, onDateClick }) => {
         return false;
     };
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.01
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { scale: 0.8, opacity: 0 },
+        visible: { scale: 1, opacity: 1 }
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.weekHeader}>
@@ -40,12 +53,21 @@ const DateGrid = ({ currentDate, selection, onDateClick }) => {
                     <div key={day} className={styles.weekDay}>{day}</div>
                 ))}
             </div>
-            <div className={styles.grid}>
+
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className={styles.grid}
+            >
                 {days.map((item, index) => {
                     const selectionState = isSelected(item.date);
                     return (
-                        <div
+                        <motion.div
                             key={index}
+                            variants={itemVariants}
+                            whileHover={item.currentMonth ? { scale: 1.1, zIndex: 10 } : {}}
+                            whileTap={item.currentMonth ? { scale: 0.95 } : {}}
                             className={`
                 ${styles.dayCell} 
                 ${!item.currentMonth ? styles.empty : ''} 
@@ -54,10 +76,13 @@ const DateGrid = ({ currentDate, selection, onDateClick }) => {
                             onClick={() => item.currentMonth && onDateClick(item.date)}
                         >
                             {item.day}
-                        </div>
+                            {selectionState === 'start' && (
+                                <motion.div layoutId="range-glow" className={styles.glow} />
+                            )}
+                        </motion.div>
                     );
                 })}
-            </div>
+            </motion.div>
         </div>
     );
 };
